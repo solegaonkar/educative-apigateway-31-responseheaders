@@ -33,7 +33,6 @@ Resources:
                     application/json:
                       schema:
                         $ref: "#/components/schemas/Empty"
-              x-amazon-apigateway-request-validator: "Validate query string parameters and headers"
               x-amazon-apigateway-integration:
                 type: "mock"
                 responses:
