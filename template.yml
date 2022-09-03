@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  DeployId:
+    Type: String
+    Default: afsf34sfdg
+  SourceCodeBucket:
+    Type: String
+    Default: afsf34sfdg
+Resources:
+  RestAPI:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Body:
+        openapi: "3.0.1"
+        info:
+          title: "EducativeRestAPI"
+          description: "Rest API for Educative API Gateway Course"
+          version: "2022-06-06T10:08:49Z"
+        paths:
+          /:
+            get:
+              responses:
+                "200":
+                  description: "200 response"
+                  headers:
+                    Source-IP:
+                      schema:
+                        type: "string"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Empty"
+              x-amazon-apigateway-request-validator: "Validate query string parameters and headers"
+              x-amazon-apigateway-integration:
+                type: "mock"
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Source-IP: "context.identity.sourceIp"
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                passthroughBehavior: "when_no_match"
+        components:
+          schemas:
+            Empty:
+              title: "Empty Schema"
+              type: "object"
+      Name: EducativeRestAPI
+      Description: "Rest API for Educative API Gateway Course"
+      Mode: overwrite
+  APIDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: RestAPI
+      StageName: v1
